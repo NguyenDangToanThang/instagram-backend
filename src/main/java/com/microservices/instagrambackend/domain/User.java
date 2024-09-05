@@ -1,5 +1,6 @@
 package com.microservices.instagrambackend.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.microservices.instagrambackend.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
@@ -30,43 +31,53 @@ public class User implements UserDetails {
     private Role role;
     private Date createdAt;
 
+    @JsonIgnoreProperties
     @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE)
     private List<Post> posts;
 
+    @JsonIgnoreProperties
     @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE)
     private List<Comment> comments;
 
+    @JsonIgnoreProperties
     @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE)
     private List<Like> likes;
 
+    @JsonIgnoreProperties
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<RefreshToken> refreshTokens;
 
+    @JsonIgnoreProperties
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
+    @JsonIgnoreProperties
     @Override
     public String getUsername() {
         return this.email;
     }
 
+    @JsonIgnoreProperties
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
 
+    @JsonIgnoreProperties
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
 
+    @JsonIgnoreProperties
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
+    @JsonIgnoreProperties
     @Override
     public boolean isEnabled() {
         return true;
