@@ -1,0 +1,11 @@
+
+spring:
+  application:
+    name: instagram-backend
+  datasource:
+    url: jdbc:postgresql://localhost:5432/instagram
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
