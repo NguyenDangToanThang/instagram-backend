@@ -22,6 +22,6 @@ public class RefreshToken {
     private boolean revoked = false;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false )
     private User user;
 }

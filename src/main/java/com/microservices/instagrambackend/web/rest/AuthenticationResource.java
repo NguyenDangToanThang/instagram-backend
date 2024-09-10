@@ -3,15 +3,15 @@ package com.microservices.instagrambackend.web.rest;
 import com.microservices.instagrambackend.domain.User;
 import com.microservices.instagrambackend.dto.*;
 import com.microservices.instagrambackend.service.AuthenticationService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -33,5 +33,11 @@ public class AuthenticationResource {
     @PostMapping("/refresh")
     public ResponseEntity<ResponseObject<JwtAuthenticationResponse>> refresh (@RequestBody RefreshTokenRequest request) {
         return ResponseEntity.ok(ResponseObject.success(authenticationService.refreshToken(request)));
+    }
+
+    @DeleteMapping("/logout")
+    public ResponseEntity<ResponseObject<?>> logout() {
+        authenticationService.logout();
+        return ResponseEntity.ok(ResponseObject.success());
     }
 }

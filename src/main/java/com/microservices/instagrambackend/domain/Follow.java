@@ -16,8 +16,10 @@ import java.util.Date;
 @Entity
 @IdClass(KeyFollow.class)
 public class Follow {
+    //người đc theo dõi
     @Id
     private String followerId;
+    //người theo dõi
     @Id
     private String followeeId;
     private Date createdDate;

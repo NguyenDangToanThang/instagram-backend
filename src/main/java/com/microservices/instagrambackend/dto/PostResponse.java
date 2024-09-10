@@ -21,4 +21,5 @@ public class PostResponse {
     Integer quantityLike;
     Integer quantityComment;
     boolean like;
+    boolean follow;
 }

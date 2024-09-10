@@ -11,6 +11,8 @@ import com.microservices.instagrambackend.repository.RefreshTokenRepository;
 import com.microservices.instagrambackend.repository.UserRepository;
 import com.microservices.instagrambackend.service.AuthenticationService;
 import com.microservices.instagrambackend.service.JWTService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -97,5 +100,21 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .build();
         }
         return null;
+    }
+
+    @Transactional
+    @Override
+    public void logout() {
+
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new RuntimeException("User not found")
+        );
+        try {
+            refreshTokenRepository.deleteByUser(user);
+            SecurityContextHolder.clearContext();
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 }
