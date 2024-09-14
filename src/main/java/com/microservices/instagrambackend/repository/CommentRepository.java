@@ -1,14 +1,14 @@
 package com.microservices.instagrambackend.repository;
 
 import com.microservices.instagrambackend.domain.Comment;
-import com.microservices.instagrambackend.domain.Like;
-import com.microservices.instagrambackend.domain.Post;
-import com.microservices.instagrambackend.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface CommentRepository extends JpaRepository<Comment, String> {
-    List<Comment> findAllByPost(Post post);
+    List<Comment> findByPostIdAndParentCommentIsNull(String postId);
+
+    @Query("SELECT c FROM Comment c LEFT JOIN FETCH c.replies WHERE c.id = :commentId")
+    Comment findByIdWithReplies(String commentId);
 }

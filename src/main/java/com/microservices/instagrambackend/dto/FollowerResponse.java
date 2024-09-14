@@ -8,10 +8,8 @@ import lombok.experimental.FieldDefaults;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
-public class ListLikeResponse {
-    String id;
-    String username;
+public class FollowerResponse {
     String email;
+    String fullname;
     String avatar;
-    boolean follow;
 }

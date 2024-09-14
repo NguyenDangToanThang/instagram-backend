@@ -5,6 +5,7 @@ import com.microservices.instagrambackend.domain.Post;
 import com.microservices.instagrambackend.domain.User;
 import com.microservices.instagrambackend.dto.LikePostRequest;
 import com.microservices.instagrambackend.dto.ListLikeResponse;
+import com.microservices.instagrambackend.repository.FollowRepository;
 import com.microservices.instagrambackend.repository.LikeRepository;
 import com.microservices.instagrambackend.repository.PostRepository;
 import com.microservices.instagrambackend.repository.UserRepository;
@@ -27,6 +28,7 @@ public class LikeServiceImpl implements LikeService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final LikeRepository likeRepository;
+    private final FollowRepository followRepository;
 
     @Transactional
     @Override
@@ -59,17 +61,30 @@ public class LikeServiceImpl implements LikeService {
 
     @Override
     public List<ListLikeResponse> getListsLike(LikePostRequest request) {
-
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new RuntimeException("User not found")
+        );
         List<Like> list = likeRepository.findAllByPost(
                 postRepository.findById(request.postId()).orElse(null)
         );
-        return list.stream().map(
-                like -> ListLikeResponse.builder()
-                        .id(like.getId())
-                        .avatar(like.getUser().getAvatar())
-                        .username(like.getUser().getFullname())
-                        .email(like.getUser().getEmail())
-                        .build()
+
+        return list.stream()
+                .filter(like -> !like.getUser().getId().equals(user.getId()))
+                .map((like) -> {
+                    boolean follow =
+                            followRepository.existsByFolloweeIdAndFollowerId(
+                                    user.getId(),
+                                    like.getUser().getId()
+                            );
+                    return ListLikeResponse.builder()
+                            .id(like.getId())
+                            .avatar(like.getUser().getAvatar())
+                            .username(like.getUser().getFullname())
+                            .email(like.getUser().getEmail())
+                            .follow(follow)
+                            .build();
+        }
         ).collect(Collectors.toList());
     }
 }

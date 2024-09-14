@@ -11,8 +11,6 @@ import com.microservices.instagrambackend.repository.RefreshTokenRepository;
 import com.microservices.instagrambackend.repository.UserRepository;
 import com.microservices.instagrambackend.service.AuthenticationService;
 import com.microservices.instagrambackend.service.JWTService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
