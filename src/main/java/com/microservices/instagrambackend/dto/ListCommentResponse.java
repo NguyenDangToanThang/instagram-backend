@@ -21,6 +21,8 @@ public class ListCommentResponse {
     String avatar;
     Date createdDate;
     String content;
+    String parentCommentId;
+    String parentName;
     int countReply;
     List<ReplyCommentResponse> replies;
 
@@ -32,11 +34,14 @@ public class ListCommentResponse {
                 .email(comment.getUser().getEmail())
                 .username(comment.getUser().getFullname())
                 .avatar(comment.getUser().getAvatar())
+                .parentCommentId(comment.getParentComment() != null ? comment.getParentComment().getId() : null)
+                .parentName(comment.getParentComment() != null ? comment.getParentComment().getUser().getFullname() : null)
                 .build();
         if (comment.getReplies() != null) {
             dto.setReplies(comment.getReplies().stream()
                     .map(ReplyCommentResponse::fromEntity)
                     .collect(Collectors.toList()));
+            dto.setCountReply(comment.getReplies().size());
         }
         return dto;
     }

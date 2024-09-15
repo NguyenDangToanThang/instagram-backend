@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -72,7 +73,16 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public ListCommentResponse getCommentWithReplies(String commentId) {
-        return ListCommentResponse.fromEntity(commentRepository.findByIdWithReplies(commentId));
+        Comment rootComment = commentRepository.findByIdWithReplies(commentId);
+        if (rootComment == null) {
+            throw new RuntimeException("Comment not found");
+        }
+
+        ListCommentResponse response = ListCommentResponse.fromEntity(rootComment);
+
+        response.setReplies(getAllRepliesRecursively(rootComment));
+
+        return response;
     }
 
     @Override
@@ -96,5 +106,18 @@ public class CommentServiceImpl implements CommentService {
                                 .parentComment(parentComment)
                 .build())
         );
+    }
+
+    private List<ReplyCommentResponse> getAllRepliesRecursively(Comment comment) {
+        List<ReplyCommentResponse> allReplies = new ArrayList<>();
+
+        for (Comment reply : comment.getReplies()) {
+            ReplyCommentResponse replyResponse = ReplyCommentResponse.fromEntity(reply);
+            allReplies.add(replyResponse);
+
+            allReplies.addAll(getAllRepliesRecursively(reply));
+        }
+
+        return allReplies;
     }
 }
