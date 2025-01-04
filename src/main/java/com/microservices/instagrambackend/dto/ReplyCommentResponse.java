@@ -15,9 +15,9 @@ import java.util.Date;
 public class ReplyCommentResponse {
     String id;
     String content;
-    Date createdAt;
+    Date createdDate;
     String email;
-    String userName;
+    String username;
     String parentCommentId;
     String parentName;
     String avatar;
@@ -26,9 +26,9 @@ public class ReplyCommentResponse {
         return ReplyCommentResponse.builder()
                 .id(reply.getId())
                 .content(reply.getContent())
-                .createdAt(reply.getCreatedAt())
+                .createdDate(reply.getCreatedAt())
                 .email(reply.getUser().getEmail())
-                .userName(reply.getUser().getFullname())
+                .username(reply.getUser().getFullname())
                 .avatar(reply.getUser().getAvatar())
                 .parentCommentId(reply.getParentComment() != null ? reply.getParentComment().getId() : null)
                 .parentName(reply.getParentComment() != null ? reply.getParentComment().getUser().getFullname() : null)

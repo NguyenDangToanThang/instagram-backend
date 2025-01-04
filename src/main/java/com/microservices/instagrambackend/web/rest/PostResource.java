@@ -69,7 +69,7 @@ public class PostResource {
     }
 
     @PostMapping("/comment-post")
-    public ResponseEntity<ResponseObject<Integer>> commentPost(@RequestBody CommentPostRequest request) {
+    public ResponseEntity<ResponseObject<?>> commentPost(@RequestBody CommentPostRequest request) {
         log.info("Request Comment Post: {}", request);
         return new ResponseEntity<>(ResponseObject.success(
                 commentService.commentPost(request)), HttpStatus.OK);
@@ -78,7 +78,6 @@ public class PostResource {
     @PostMapping("/reply-comment/{commentId}")
     public ResponseEntity<ResponseObject<?>> replyPost(@PathVariable String commentId,
                                                        @RequestBody CommentPostRequest request) {
-
         return new ResponseEntity<>(ResponseObject.success(
                 commentService
                         .createReply(commentId, request)), HttpStatus.OK);

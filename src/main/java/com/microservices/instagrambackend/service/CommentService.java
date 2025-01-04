@@ -9,7 +9,7 @@ import com.microservices.instagrambackend.dto.ReplyCommentResponse;
 import java.util.List;
 
 public interface CommentService {
-    int commentPost(CommentPostRequest request);
+    ListCommentResponse commentPost(CommentPostRequest request);
     List<ListCommentResponse> getListsComment(LikePostRequest request);
     ListCommentResponse getCommentWithReplies(String commentId);
     ReplyCommentResponse createReply(String parentCommentId, CommentPostRequest reply);

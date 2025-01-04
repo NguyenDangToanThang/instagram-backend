@@ -2,11 +2,9 @@ package com.microservices.instagrambackend.service.impl;
 
 import com.microservices.instagrambackend.domain.RefreshToken;
 import com.microservices.instagrambackend.domain.User;
-import com.microservices.instagrambackend.dto.JwtAuthenticationResponse;
-import com.microservices.instagrambackend.dto.RefreshTokenRequest;
-import com.microservices.instagrambackend.dto.SignInRequest;
-import com.microservices.instagrambackend.dto.SignUpRequest;
+import com.microservices.instagrambackend.dto.*;
 import com.microservices.instagrambackend.enums.Role;
+import com.microservices.instagrambackend.repository.FollowRepository;
 import com.microservices.instagrambackend.repository.RefreshTokenRepository;
 import com.microservices.instagrambackend.repository.UserRepository;
 import com.microservices.instagrambackend.service.AuthenticationService;
@@ -34,6 +32,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private static final Logger log = LoggerFactory.getLogger(AuthenticationServiceImpl.class);
     UserRepository userRepository;
+    FollowRepository followRepository;
     PasswordEncoder passwordEncoder;
     AuthenticationManager authenticationManager;
     JWTService jwtService;
@@ -76,6 +75,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             return JwtAuthenticationResponse.builder()
                     .token(jwt)
                     .refreshToken(refreshToken)
+                    .user(UserResponse.builder()
+                            .id(user.getId())
+                            .bio(user.getBio())
+                            .avatar(user.getAvatar())
+                            .email(user.getEmail())
+                            .fullname(user.getFullname())
+                            .createdAt(user.getCreatedAt())
+                            .follower(followRepository.countByFollowerId(user.getId()))
+                            .build())
                     .build();
         } catch (Exception e) {
             log.error("Error in signin function: {}",e.getMessage());
@@ -95,6 +103,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             return JwtAuthenticationResponse.builder()
                     .token(jwt)
                     .refreshToken(request.token())
+                    .user(UserResponse.builder()
+                            .id(user.getId())
+                            .bio(user.getBio())
+                            .avatar(user.getAvatar())
+                            .email(user.getEmail())
+                            .fullname(user.getFullname())
+                            .createdAt(user.getCreatedAt())
+                            .follower(followRepository.countByFollowerId(user.getId()))
+                            .build())
                     .build();
         }
         return null;

@@ -31,7 +31,7 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
 
     @Override
-    public int commentPost(CommentPostRequest request) {
+    public ListCommentResponse commentPost(CommentPostRequest request) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new RuntimeException("User not found")
@@ -40,13 +40,21 @@ public class CommentServiceImpl implements CommentService {
                 () -> new RuntimeException("Post not found")
         );
         try {
-            commentRepository.save(Comment.builder()
+            Comment comment = commentRepository.save(Comment.builder()
                     .post(post)
                     .user(user)
                     .createdAt(new Date())
                     .content(request.content())
                     .build());
-            return 1;
+            return ListCommentResponse.builder()
+                    .id(comment.getId())
+                    .createdDate(comment.getCreatedAt())
+                    .email(comment.getUser().getEmail())
+                    .username(comment.getUser().getFullname())
+                    .avatar(comment.getUser().getAvatar())
+                    .content(comment.getContent())
+                    .countReply(0)
+                    .build();
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -58,15 +66,13 @@ public class CommentServiceImpl implements CommentService {
         List<Comment> comments = commentRepository.findByPostIdAndParentCommentIsNull(request.postId());
         return comments.stream().map(
                 comment -> ListCommentResponse.builder()
+                        .id(comment.getId())
                         .createdDate(comment.getCreatedAt())
                         .email(comment.getUser().getEmail())
                         .username(comment.getUser().getFullname())
                         .avatar(comment.getUser().getAvatar())
                         .content(comment.getContent())
-                        .countReply(commentRepository.findByIdWithReplies(
-                                comment.getId()
-                            ).getReplies().size()
-                        )
+                        .countReply(getAllRepliesRecursively(comment).size())
                         .build()
         ).collect(Collectors.toList());
     }

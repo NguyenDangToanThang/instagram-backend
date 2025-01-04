@@ -11,4 +11,5 @@ import lombok.experimental.FieldDefaults;
 public class JwtAuthenticationResponse {
     String token;
     String refreshToken;
+    UserResponse user;
 }
